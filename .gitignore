@@ -1,0 +1,7 @@
+.idea
+.coding-ide
+test
+app/runtime/log/*.log
+upload
+cache
+vendor

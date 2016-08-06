@@ -2,7 +2,19 @@
 
 namespace core\system;
 
-
+/**
+ * ---------------------------------------------------
+ * HERE IS ONE PART OF OPEN SOURCE PROJECT Illyrix/Hf.
+ *      IT'S RELEASED UNDER APACHE LICENSE 2.0
+ * SEE https://github.com/Illyrix/Hf FOR MORE DETAILS.
+ * ---------------------------------------------------
+ *
+ * Class Route
+ * @package core\system
+ * @author Illyrix
+ * @license	http://www.apache.org/licenses/LICENSE-2.0
+ * The class for implementing router.
+ */
 class Route
 {
     /*

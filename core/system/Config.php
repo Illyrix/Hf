@@ -5,9 +5,17 @@ namespace core\system;
 use core;
 
 /**
- * @author Illyrix
+ * ---------------------------------------------------
+ * HERE IS ONE PART OF OPEN SOURCE PROJECT Illyrix/Hf.
+ *      IT'S RELEASED UNDER APACHE LICENSE 2.0
+ * SEE https://github.com/Illyrix/Hf FOR MORE DETAILS.
+ * ---------------------------------------------------
+ *
  * Class Config
- * read config file
+ * @package core\system
+ * @author Illyrix
+ * @license	http://www.apache.org/licenses/LICENSE-2.0
+ * Read configures from files.
  */
 class Config
 {

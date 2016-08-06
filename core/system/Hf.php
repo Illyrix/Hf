@@ -1,4 +1,16 @@
 <?php
+/**
+ * ---------------------------------------------------
+ * HERE IS ONE PART OF OPEN SOURCE PROJECT Illyrix/Hf.
+ *      IT'S RELEASED UNDER APACHE LICENSE 2.0
+ * SEE https://github.com/Illyrix/Hf FOR MORE DETAILS.
+ * ---------------------------------------------------
+ *
+ * @author Illyrix
+ * @license	http://www.apache.org/licenses/LICENSE-2.0
+ * The file to load each parts.
+ */
+
 namespace core\system;
 /*
  * Check if it is required by index.php
@@ -8,7 +20,7 @@ defined('CORE_PATH') or exit("Access file required");
 /*
  * Define current version
  */
-defined('FRAME_VERSION') or define('FRAME_VERSION', '0.0.0');
+defined('HF_VERSION') or define('HF_VERSION', '0.0.0');
 
 /*
  * Load functions from core/function.php

@@ -1,4 +1,15 @@
 <?php
+/**
+ * ---------------------------------------------------
+ * HERE IS ONE PART OF OPEN SOURCE PROJECT Illyrix/Hf.
+ *      IT'S RELEASED UNDER APACHE LICENSE 2.0
+ * SEE https://github.com/Illyrix/Hf FOR MORE DETAILS.
+ * ---------------------------------------------------
+ *
+ * @author Illyrix
+ * @license	http://www.apache.org/licenses/LICENSE-2.0
+ * This is the access file, where all work starts.
+ */
 
 /*
  * The directory which includes your application. Default
@@ -79,4 +90,4 @@ if (!defined('APP_PATH')) {
  */
 defined('SYSTEM_PATH') or define('SYSTEM_PATH', realpath(CORE_PATH . '/system'));
 
-require_once SYSTEM_PATH . '/Frame.php';
+require_once SYSTEM_PATH . '/Hf.php';

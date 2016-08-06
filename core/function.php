@@ -3,6 +3,17 @@
  * @author Illyrix
  * Include universal functions
  */
+/**
+ * ---------------------------------------------------
+ * HERE IS ONE PART OF OPEN SOURCE PROJECT Illyrix/Hf.
+ *      IT'S RELEASED UNDER APACHE LICENSE 2.0
+ * SEE https://github.com/Illyrix/Hf FOR MORE DETAILS.
+ * ---------------------------------------------------
+ *
+ * @author Illyrix
+ * @license	http://www.apache.org/licenses/LICENSE-2.0
+ * Include universal functions
+ */
 
 /*
  * redirect to the url and exit.

@@ -20,11 +20,18 @@ use core;
 class Config
 {
 
+    //Define the default config file path,
+    //relative to CORE_PATH
+    const CONFIG_DEFAULT_PATH = CORE_PATH . '/static/config.default.php';
+
+
+    const CONFIG_CUSTOM_PATH  = APP_PATH . '/config';
+
     /**
      * Save all configures
      * @var array
      */
-    static protected $configure;
+    static protected $_configure;
 
     /**
      * We need know whether the configures are really
@@ -35,47 +42,41 @@ class Config
      * cause endless loop.
      * @var bool
      */
-    static protected $init = false;
+    static protected $_init = false;
 
-    //Define the default config file path,
-    //relative to CORE_PATH
-    const CONFIG_DEFAULT_PATH = CORE_PATH . '/static/config.default.php';
-
-
-    const CONFIG_CUSTOM_PATH  = APP_PATH . '/config';
 
     protected function __construct() {
     }
 
     static public function getConfig($field) {
-        (self::$init) or self::readConfig();
-        return isset(self::$configure[$field]) ? (self::$configure[$field]) : null;
+        (self::$_init) or self::readConfig();
+        return isset(self::$_configure[$field]) ? (self::$_configure[$field]) : null;
     }
 
     static public function setConfig($field, $value) {
-        (self::$init) or self::readConfig();
-        self::$configure[$field] = $value;
+        (self::$_init) or self::readConfig();
+        self::$_configure[$field] = $value;
     }
 
     /*
      * Return true if configures were correctly read.
      */
     static public function isInit() {
-        return self::$init;
+        return self::$_init;
     }
 
     static public function readConfig() {
-        if (self::$init)
+        if (self::$_init)
             return;
         //Ensure configures are correctly saved.
-        if (!self::readDefault() or !self::readCustom())
+        if (!self::_readDefault() or !self::_readCustom())
             return;
 
         //If all configures were read, set flag true.
-        self::$init = true;
+        self::$_init = true;
     }
 
-    static protected function readDefault() {
+    static protected function _readDefault() {
         $default_file = rtrim(self::CONFIG_DEFAULT_PATH, '/');
 
         if (!file_exists($default_file)) {
@@ -97,40 +98,23 @@ class Config
             exit();
         }
 
-        self::$configure = &$configure;
+        self::$_configure = &$configure;
         return true;
     }
 
-    static protected function readCustom() {
+    static protected function _readCustom() {
         $absolute_path = rtrim(self::CONFIG_CUSTOM_PATH, '/');
 
-        //Traversal custom config path recursively.
-        $files = map_dir_file($absolute_path);
-        foreach ($files as $key => $file) {
-            $info = pathinfo($file);
-
-            //We just need files with extension 'php'
-            if (isset($info['extension'])) {
-                if (strtolower($info['extension']) == 'php') {
-
-                    /*
-                     * Same as method 'readDefault()'. If
-                     * there were syntax error in file, it
-                     * will call shutdown handler function.
-                     */
-                    $configure = require($file);
-                    if (!is_array($configure)) {
-                        http_response_code(503);
-                        echo("The config file needs an array as return at {$file}");
-                        exit();
-                    }else
-                        self::$configure = array_merge(self::$configure, $configure);
-                }
+        //Traversal custom config path recursively and
+        //load them.
+        $configures = load_custom_script($absolute_path);
+        foreach ($configures as $configure)
+            if (!is_array($configure)) {
+                http_response_code(503);
+                echo("The config file needs an array as return in path {$absolute_path}");
+                exit();
             }else
-
-                //If is a dir not a file
-                continue;
-        }
+                self::$_configure = array_merge(self::$_configure, $configure);
         return true;
     }
 }

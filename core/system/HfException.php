@@ -28,11 +28,11 @@ class HfException extends \Exception
      * Save the error level. NOTICE and WARNING
      * won't stop the process, ERROR will.
      */
-    protected $level;
+    protected $_level;
 
     public function __construct($message, $code = null, $level = self::ERROR_LEVEL_ERROR) {
         parent::__construct($message, $code);
-        $this->level = $level;
+        $this->_level = $level;
     }
 
     public function displayError($status_code = 500) {
@@ -48,12 +48,12 @@ class HfException extends \Exception
          * -------------------------------------------
          * NOTICE:If log file permission error
          */
-        switch ($this->level) {
+        switch ($this->_level) {
 
             case self::ERROR_LEVEL_NOTICE:
                 $error_type = 'Notice';
                 if (!Log::writeLog(Log::LEVEL_NOTICE, $this->message)) {
-                    $this->unExceptedError("Write log failed. Please check permission.");
+                    $this->_unExceptedError("Write log failed. Please check permission.");
                     return false;
                 }
                 $display = $init_set && Config::getConfig('NOTICE_DISPLAY_ON');
@@ -62,7 +62,7 @@ class HfException extends \Exception
             case self::ERROR_LEVEL_WARNING:
                 $error_type = 'Warning';
                 if (!Log::writeLog(Log::LEVEL_WARNING, $this->message)) {
-                    $this->unExceptedError("Write log failed. Please check permission.");
+                    $this->_unExceptedError("Write log failed. Please check permission.");
                     return false;
                 }
                 $display = $init_set && Config::getConfig('WARNING_DISPLAY_ON');
@@ -71,7 +71,7 @@ class HfException extends \Exception
             case self::ERROR_LEVEL_ERROR:
                 $error_type = 'Error';
                 if (!Log::writeLog(Log::LEVEL_ERROR, $this->message)) {
-                    $this->unExceptedError("Write log failed. Please check permission.");
+                    $this->_unExceptedError("Write log failed. Please check permission.");
                     return false;
                 }
                 $display = $init_set && Config::getConfig('ERROR_DISPLAY_ON');
@@ -79,7 +79,7 @@ class HfException extends \Exception
             default:
                 $error_type = 'Undefined';
                 if (!Log::writeLog(Log::LEVEL_ALL, $this->message)) {
-                    $this->unExceptedError("Write log failed. Please check permission.");
+                    $this->_unExceptedError("Write log failed. Please check permission.");
                     return false;
                 }
                 $display = $init_set && Config::getConfig('ERROR_DISPLAY_ON');
@@ -124,7 +124,7 @@ class HfException extends \Exception
                 if (!file_exists($template = ROOT_PATH . '/' . $full_name))
                     if (!file_exists($template = CORE_PATH . '/' . $full_name))
                         if (!file_exists($template = $full_name)) {
-                            $this->unExceptedError("Error template file is missing.");
+                            $this->_unExceptedError("Error template file is missing.");
                             Log::writeLog(Log::LEVEL_ERROR, "Error template file is missing at " . $full_name);
                             return false;
                         }
@@ -156,7 +156,7 @@ class HfException extends \Exception
     //If failed to load template file or
     //log file permission denied, use it
     //for returning error information
-    protected function unExceptedError($message) {
+    protected function _unExceptedError($message) {
         http_response_code(503);
         echo "<p>$message</p>";
         echo "<p>{$this->message}</p>";

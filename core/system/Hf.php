@@ -7,7 +7,7 @@
  * ---------------------------------------------------
  *
  * @author Illyrix
- * @license	http://www.apache.org/licenses/LICENSE-2.0
+ * @license    http://www.apache.org/licenses/LICENSE-2.0
  * The file to load each parts.
  */
 
@@ -51,6 +51,11 @@ register_shutdown_function('handler_shutdown');
 spl_autoload_register('autoload_class', true, true);
 
 
+//Set timezone. The default value is Asia/Shanghai.
+is_null(Config::getConfig('DEFAULT_TIMEZONE')) or date_default_timezone_set(Config::getConfig('DEFAULT_TIMEZONE'));
+
+is_null(Config::getConfig('DEFAULT_CHARSET')) or ini_set('default_charset', Config::getConfig('DEFAULT_CHARSET'));
+
 /*
  * Add composer support. You can disable composer 
  * in config file with setting COMPOSER_LOAD false.
@@ -63,7 +68,63 @@ if (Config::getConfig('COMPOSER_LOAD') == true) {
         Log::writeLog(Log::LEVEL_ERROR, "COMPOSER_LOAD has set to true, but missing autoload.php");
 }
 
-//Set timezone. The default value is Asia/Shanghai.
-is_null(Config::getConfig('DEFAULT_TIMEZONE')) or date_default_timezone_set(Config::getConfig('DEFAULT_TIMEZONE'));
+//Give a default value to PATH_INFO.
+(isset($_SERVER['PATH_INFO'])) or $_SERVER['PATH_INFO'] = '';
 
-throw new \Exception('hahaha');
+
+//Analysis route, default action is
+// throwing 404 error.
+$callable = 'return_404';
+
+if (!Route::current()->is_success)
+    $bad_route = true;
+elseif (!Route::current()->is_closure) {
+    //Make the 1st letter capital.
+    $class = ucfirst(Route::current()->class);
+    $method = Route::current()->method;
+
+    $bad_route = !(bool)is_controller_callable($class, $method);
+    /*
+     * NOTICE: is_controller_callable() will
+     * return an array as value if it is
+     * callable, or return false.
+     */
+    if (!$bad_route) $callable = Array(is_controller_callable($class, $method)[0], $method);
+
+} else {
+    $bad_route = false;
+    $callable = Route::current()->callable;
+}
+
+//The controller or method not found
+if ($bad_route) {
+
+    //Try to redirect the page was set.
+    if (Config::getConfig('NOT_FOUND_REDIRECT')) {
+        if (Config::getConfig('NOT_FOUND_CONTROLLER')) {
+            $class = Config::getConfig('NOT_FOUND_CONTROLLER');
+            $method =
+                is_null(Config::getConfig('NOT_FOUND_METHOD')) ? 'index' : Config::getConfig('NOT_FOUND_METHOD');
+            $bad_route = !(bool)is_controller_callable($class, $method);
+            if (!$bad_route) $callable = Array(is_controller_callable($class, $method)[0], $method);
+        } else
+            throw_exception("Direct when 404 occurs is set, but missing corresponding controller config.");
+    }
+}
+
+//If failed to redirect.
+if ($bad_route) {
+    throw_exception("404 Not Found", null, 404);
+    exit;
+}
+
+/* Merge $_GET and arguments from url.
+ * Not using array_merge is because
+ * we want to avoid numeric key renumbered.
+ * See http://php.net/manual/en/function.array-merge.php.
+ */
+$_GET = $_GET + Route::current()->arguments;
+
+//Call the method or closure function
+//the route returned.
+call_user_func($callable);

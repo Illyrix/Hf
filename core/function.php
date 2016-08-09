@@ -1,9 +1,5 @@
 <?php
 /**
- * @author Illyrix
- * Include universal functions
- */
-/**
  * ---------------------------------------------------
  * HERE IS ONE PART OF OPEN SOURCE PROJECT Illyrix/Hf.
  *      IT'S RELEASED UNDER APACHE LICENSE 2.0
@@ -242,5 +238,104 @@ if (!function_exists('throw_exception')) {
     function throw_exception($message, $code = null,$status_code = 500, $level = \core\system\HfException::ERROR_LEVEL_ERROR) {
         $e = new \core\system\HfException($message, $code, $level);
         $e->displayError($status_code);
+    }
+}
+
+/*
+ * Return HTTP method as integer.
+ */
+if (!function_exists('request_method')) {
+    /**
+     * @return int|null
+     */
+    function request_method() {
+        $method = strtolower($_SERVER['REQUEST_METHOD']);
+        switch ($method) {
+            case 'get' :
+                return \core\system\Route::ROUTE_GET;
+            case 'post':
+                return \core\system\Route::ROUTE_POST;
+            case 'put' :
+                return \core\system\Route::ROUTE_PUT;
+            case 'delete' :
+                return \core\system\Route::ROUTE_DELETE;
+            default:
+                throw_exception('Undefined request method');
+                return null;
+        }
+    }
+}
+
+/*
+ * Load custom script files from $dir.
+ * Flag $returned decides if (true for)
+ * we save return value of those scripts
+ * and return them as an array, or (false
+ * for) do not save, just run those scripts.
+ * $recursive means if we search directories
+ * under $dir.
+ */
+if (!function_exists('load_custom_script')) {
+    /**
+     * @param string $dir
+     * @param bool $returned
+     * @param string $extension
+     * @param bool $recursive
+     * @return array|bool
+     */
+    function load_custom_script($dir, $returned = true, $extension = 'php', $recursive = true) {
+        if (!is_dir($dir) or !is_readable($dir)) return false;
+        $return = Array();
+
+        $files = map_dir_file($dir, $recursive);
+        foreach ($files as $file) {
+            $info = pathinfo($file);
+            if (strtolower($info['extension']) != $extension) continue;
+            $x = include($file);
+            if ($returned) array_push($return, $x);
+        }
+        if ($returned)
+            return $return;
+        else
+            return true;
+    }
+}
+
+/*
+ * Check if class exists and the method
+ * is callable (not private or protected).
+ * Return false or an array of class and
+ * method.
+ * ---------------------------------------
+ * NOTICE: The class returns maybe not the
+ * same as input.
+ */
+if (!function_exists('is_controller_callable')) {
+    /**
+     * @param string $class
+     * @param string $method
+     * @return array|bool
+     */
+    function is_controller_callable($class, $method) {
+        if (empty($class) || !file_exists(APP_PATH . "/controller/{$class}.php"))
+            return false;
+        else {
+            require_once(APP_PATH . "/controller/{$class}.php");
+
+            //If class name is given without namespace
+            if (!class_exists($class, false))
+                $class = "\\app\\controller\\" . $class ;
+
+            //Avoid autoload class.
+            if (!class_exists($class, false)
+                //If $method is a unreachable method(private
+                //or protected).
+                or (!is_callable(Array($class, $method)))
+                //If $method exists base controller class.
+                //We'd better avoid call it from route.
+                or (method_exists('\\core\\system\\Controller', $method)))
+                return false;
+            return Array($class, $method);
+        }
     }
 }

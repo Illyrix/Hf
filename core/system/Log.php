@@ -28,25 +28,25 @@ class Log
 
     const LEVEL_ALL     = 6;
 
-    static protected $instance = null;
+    static protected $_instance = null;
 
-    static protected $init = false;
+    static protected $_init = false;
 
-    protected $logPath = APP_PATH . '/runtime/log';
+    protected $_log_path = APP_PATH . '/runtime/log';
 
-    protected $logLevel;
+    protected $_log_level;
 
-    protected $logFilename;
+    protected $_log_filename;
 
-    protected $logExt = 'log';
+    protected $_log_ext = 'log';
 
     static public function writeLog($level, $message) {
-        (!is_null(self::$instance)) or self::$instance = new Log();
-        return self::$instance->createLog($level, $message);
+        (!is_null(self::$_instance)) or self::$_instance = new Log();
+        return self::$_instance->createLog($level, $message);
     }
 
     static public function isInit() {
-        return self::$init;
+        return self::$_init;
     }
 
     protected function __construct() {
@@ -58,34 +58,34 @@ class Log
          * If config initialize failed, will use
          * default setting.
          */
-        $this->logPath = rtrim((Config::isInit() and !is_null(Config::getConfig('LOG_PATH'))) ?
-            Config::getConfig('LOG_PATH') : $this->logPath, '/');
+        $this->_log_path = rtrim((Config::isInit() and !is_null(Config::getConfig('LOG_PATH'))) ?
+            Config::getConfig('LOG_PATH') : $this->_log_path, '/');
 
-        $this->logFilename = trim((Config::isInit() and !is_null(Config::getConfig('LOG_FILENAME'))) ?
+        $this->_log_filename = trim((Config::isInit() and !is_null(Config::getConfig('LOG_FILENAME'))) ?
             Config::getConfig('LOG_FILENAME') : date('Y-m-d'));
 
-        $this->logExt = trim((Config::isInit() and !is_null(Config::getConfig('LOG_EXTENSION'))) ?
-            Config::getConfig('LOG_EXTENSION') : $this->logExt);
+        $this->_log_ext = trim((Config::isInit() and !is_null(Config::getConfig('LOG_EXTENSION'))) ?
+            Config::getConfig('LOG_EXTENSION') : $this->_log_ext);
 
         /*
          * Check if path for saving logs exits,
          * if not then try to create it.
          */
-        file_exists($this->logPath) or @mkdir($this->logPath, 0755, true);
+        file_exists($this->_log_path) or @mkdir($this->_log_path, 0755, true);
 
-        if (!is_dir($this->logPath) || !is_writable($this->logPath)) {
-            self::$init = false;
+        if (!is_dir($this->_log_path) || !is_writable($this->_log_path)) {
+            self::$_init = false;
             return;
         }
 
-        self::$init = true;
+        self::$_init = true;
     }
 
     protected function createLog($level, $message) {
-        if (!self::$init) return false;
+        if (!self::$_init) return false;
 
         //Get the full path of written file.
-        $real_file = "{$this->logPath}/{$this->logFilename}.{$this->logExt}";
+        $real_file = "{$this->_log_path}/{$this->_log_filename}.{$this->_log_ext}";
 
         //Check if the file exists. For changing
         //its permission.

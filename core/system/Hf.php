@@ -68,6 +68,18 @@ if (Config::getConfig('COMPOSER_LOAD') == true) {
         Log::writeLog(Log::LEVEL_ERROR, "COMPOSER_LOAD has set to true, but missing autoload.php");
 }
 
+
+/*
+ * Load custom functions, default directory is
+ * /app/common.
+ * -------------------------------------------
+ * SUGGESTION: Add checking if function exists
+ * code before define it.
+ */
+load_custom_script(is_null(Config::getConfig('CUSTOM_FUNCTION_DIRECTORY')) ? APP_PATH . '/common' :
+    Config::getConfig('CUSTOM_FUNCTION_DIRECTORY'), false);
+
+
 //Give a default value to PATH_INFO.
 (isset($_SERVER['PATH_INFO'])) or $_SERVER['PATH_INFO'] = '';
 
@@ -118,13 +130,7 @@ if ($bad_route) {
     exit;
 }
 
-/* Merge $_GET and arguments from url.
- * Not using array_merge is because
- * we want to avoid numeric key renumbered.
- * See http://php.net/manual/en/function.array-merge.php.
- */
-$_GET = $_GET + Route::current()->arguments;
-
 //Call the method or closure function
 //the route returned.
+if (!($callable instanceof \Closure) && isset($callable[0])) $callable[0] = new $callable[0];
 call_user_func($callable);

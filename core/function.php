@@ -291,7 +291,7 @@ if (!function_exists('load_custom_script')) {
         foreach ($files as $file) {
             $info = pathinfo($file);
             if (strtolower($info['extension']) != $extension) continue;
-            $x = include($file);
+            $x = include_once($file);
             if ($returned) array_push($return, $x);
         }
         if ($returned)

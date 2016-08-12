@@ -37,5 +37,18 @@ return Array(
     'INPUT_KEY_FILTER'         => 'htmlspecialchars',
     'INPUT_KEY_FILTER_PARAM'   => Array(ENT_QUOTES),
     'INPUT_VALUE_FILTER'       => 'htmlspecialchars',
-    'INPUT_VALUE_FILTER_PARAM' => Array(ENT_QUOTES)
+    'INPUT_VALUE_FILTER_PARAM' => Array(ENT_QUOTES),
+
+    'APP_TEMPLATE_DIR'       => APP_PATH . '/view',
+    'APP_TEMPLATE_CACHE_ON'  => false,
+    'APP_TEMPLATE_CACHE_DIR' => APP_PATH . '/runtime/cache/view/',
+    'APP_TEMPLATE_EXTENSION' => 'html',
+
+
+    'DB_NAME'    => '',
+    'DB_USER'    => 'root',
+    'DB_PWD'     => '',
+    'DB_HOST'    => 'localhost',
+    'DB_CHARSET' => 'utf8',
+    'DB_TYPE'    => 'mysql',
 );

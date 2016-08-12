@@ -10,12 +10,11 @@ class Controller
     protected $_input;
 
     public function __construct() {
+        $this->_input = new Input();
+        $this->_view = new View(array_pop(explode('\\', get_class($this))));
         $pre_action = is_null($pre = Config::getConfig('PRE_ACTION')) ? '_preAction' : $pre;
 
         if (method_exists($this, $pre_action)) call_user_func(Array($this, $pre_action));
-
-        $this->_input = new Input();
-        $this->_view = new View();
     }
 
     public function __destruct() {

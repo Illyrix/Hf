@@ -1,7 +1,7 @@
 .idea
 .coding-ide
-test
+/test
 app/runtime/log/*.log
 upload
-cache
+/cache
 vendor

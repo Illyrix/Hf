@@ -93,14 +93,16 @@ class Input
      * @return mixed
      */
     protected function _filter(&$array, $field, $filter = '', $param = Array(), $default = null) {
-        $param = empty($filter) ? Array(ENT_QUOTES) :
-            (empty($param) ?
-                (is_null($de_p = Config::getConfig('INPUT_VALUE_FILTER_PARAM')) ?
-                    Array(ENT_QUOTES) : $de_p) : $param);
-
-        $filter =
-            !empty($filter) ? $filter :
-                (is_null($de_f = Config::getConfig('INPUT_VALUE_FILTER')) ? 'htmlspecialchars' : $de_f);
+        if (empty($filter)) {
+            $filter = is_null($de_f = Config::getConfig('INPUT_VALUE_FILTER')) ? 'htmlspecialchars' : $de_f;
+            $param = empty($param) ? (is_null($de_p = Config::getConfig('INPUT_VALUE_FILTER_PARAM')) ?
+                Array() : $de_p) : $param;
+        } elseif ($filter == Config::getConfig('INPUT_VALUE_FILTER_PARAM')) {
+            $param = empty($param) ? (is_null($de_p = Config::getConfig('INPUT_VALUE_FILTER_PARAM')) ?
+                Array() : $de_p) : $param;
+        } else {
+            $param = empty($param) ? Array() : $param;
+        }
 
         if ($field)
             if (!empty($filter)) {

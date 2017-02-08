@@ -232,9 +232,17 @@ class Route
             if (!(request_method() & $r[2])) continue;
 
             //Match the empty url string
-            if ($r[0] === Array(0 => ''))
-                if (trim($url) === '')
+            if ($r[0] == Array(0 => ''))
+                if (trim($url) === '') {
+                    if ($r[1] instanceof \Closure) {
+                        $this->_callable = $r[1];
+                        $this->_is_closure = $this->_is_success = true;
+                    } else {
+                        list($this->_class, $this->_method) = $r[1];
+                        list($this->_is_success, $this->_is_closure) = Array(true, false);
+                    }
                     return Array($r[1], Array());
+                }
                 else
                     continue;
 

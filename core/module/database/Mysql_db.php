@@ -416,4 +416,32 @@ class Mysql_db extends Database{
         return $this;
 
     }
+
+    /**
+     * @return bool
+     */
+    public function beginTransaction() {
+        return $this->dbConnect->beginTransaction();
+    }
+
+    /**
+     * @return bool
+     */
+    public function commit() {
+        return $this->dbConnect->commit();
+    }
+
+    /**
+     * @return bool
+     */
+    public function rollBack() {
+        return $this->dbConnect->rollBack();
+    }
+
+    /**
+     * @return bool
+     */
+    public function inTransaction() {
+        return $this->dbConnect->inTransaction();
+    }
 }

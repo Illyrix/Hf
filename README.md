@@ -157,12 +157,23 @@ $this->view->display('index');
  * ::order($str)
    选择排序方式.  
    `$model->where(['gender'=>0])->order('id DESC')->select()`
+ * ::beginTransaction()
+   开始事务.  
+   `$model->beginTransaction()`
+ * ::commit()
+   提交事务.  
+   `$model->commit()`
+ * ::rollBack()
+   回滚事务.  
+   `$model->rollBack()`
+ * ::inTransaction()
+   是否处在一个事务中.  
+   `$model->inTransaction()`
 
   >注意:
->1. 暂时未实现事务.  
->2. 暂时未实现 sum, max 等函数.
->3. 更新记录需要数据中有主键.
->4. 删除操作默认执行软删除, 即只更新 `deletetime` 字段. 使用 `delete(true)` 来执行硬删除.
+>1. 暂时未实现 sum, max 等函数.
+>2. 更新记录需要数据中有主键.
+>3. 删除操作默认执行软删除, 即只更新 `deletetime` 字段. 使用 `delete(true)` 来执行硬删除.
 
   __目前数据库的驱动只支持 MySQL.__
 * 路由  
